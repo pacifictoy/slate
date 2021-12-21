@@ -3,10 +3,7 @@ title: API Reference
 
 language_tabs: # must be one of https://git.io/vQNgJ
   - shell
-  - ruby
-  - python
-  - javascript
-
+  
 toc_footers:
   - <a href='#'>Sign Up for a Developer Key</a>
   - <a href='https://github.com/slatedocs/slate'>Documentation Powered by Slate</a>
@@ -27,9 +24,21 @@ meta:
 
 Welcome to the Palladium API! You can use our API to access Palladium API endpoints to receive payments, disburse payments and get advanced disbursement
 
-We have language bindings in Shell, Ruby, Python, and JavaScript! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+Our API is using REST. Our API has predictable, resource-oriented URLs, and uses HTTP response codes to indicate API errors. We use built-in HTTP features and HTTP verbs, which are understood by off-the-shelf HTTP clients. JSON is returned by all API responses, including errors.
 
-This example API documentation page was created with [Slate](https://github.com/slatedocs/slate). Feel free to edit it and use it as a base for your own API's documentation.
+Please feel free to [contact us](mailto:admin@pallapi.com) if you have any questions. 
+
+# Dashboards
+
+Please access qa dashboard from [here](https://qa.pallapi.com/admin)
+
+Please access prod dashboard from [here](https://prod.pallapi.com/admin)
+
+# API URL
+
+QA: [http://qa.pallapi.com/api/v2/end-point-name](http://qa.pallapi.com/api/v2/end-point-name)
+
+PROD: [https://prod.pallapi.com/api/v2/end-point-name] (https://prod.pallapi.com/api/v2/end-point-name)
 
 # Authentication
 
@@ -61,44 +70,23 @@ let api = kittn.authorize('meowmeowmeow');
 
 > Make sure to replace `meowmeowmeow` with your API key.
 
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
+Please use API keys to allow access to the API. You can see your API key at our [qa dashboard](http://qa.pallapi.com) or [prod dashboard](http://prod.pallapi.com).
 
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
+We expects for the API key to be included in all API requests to the server in a header that looks like the following:
 
-`Authorization: meowmeowmeow`
+`Authorization: blablabla`
 
 <aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
+You must replace <code>blablabla</code> with your personal API key.
 </aside>
 
-# Kittens
+# Receiving Payments
 
-## Get All Kittens
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
+## Virtual Accounts
 
 ```shell
-curl "http://example.com/api/kittens" \
+curl "http://qa.pallapi.com/api/v2/create-virtual-accounts" \
   -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let kittens = api.kittens.get();
 ```
 
 > The above command returns JSON structured like this:
@@ -122,7 +110,7 @@ let kittens = api.kittens.get();
 ]
 ```
 
-This endpoint retrieves all kittens.
+This endpoint create virtual accounts to receive payments
 
 ### HTTP Request
 
@@ -139,7 +127,7 @@ available | true | If set to false, the result will include kittens that have al
 Remember — a happy kitten is an authenticated kitten!
 </aside>
 
-## Get a Specific Kitten
+## Retail Payments (Alfamart)
 
 ```ruby
 require 'kittn'
@@ -243,3 +231,4 @@ Parameter | Description
 --------- | -----------
 ID | The ID of the kitten to delete
 
+# Disburse Payments

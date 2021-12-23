@@ -5,8 +5,7 @@ language_tabs: # must be one of https://git.io/vQNgJ
   - shell
   
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='https://github.com/slatedocs/slate'>Documentation Powered by Slate</a>
+  - <a href='https://qa.pallapi.com/admin'>Get your access key from the dashboard</a>
 
 includes:
   - errors
@@ -17,7 +16,7 @@ code_clipboard: true
 
 meta:
   - name: description
-    content: Documentation for the Kittn API
+    content: Documentation for the Pallapi API
 ---
 
 # Introduction
@@ -53,7 +52,7 @@ curl "api_endpoint_here" \
 
 > Make sure to replace `bearer-token` with your API key.
 
-Please use API keys to allow access to the API. You can see your API key at our [qa dashboard](http://qa.pallapi.com) or [prod dashboard](http://prod.pallapi.com).
+Please use API keys to allow access to the API. You can see your API key at our [qa dashboard](https://qa.pallapi.com) or [prod dashboard](https://prod.pallapi.com).
 
 We expects for the API key to be included in all API requests to the server in a header that looks like the following:
 
@@ -105,11 +104,10 @@ Parameter | Required? | Description
 --------- | ------- | -----------
 bank_code | Yes | You can specify "BNI, "BCA"
 external_id | Yes | This is the ID that you can set to correspond to your ID
-account_name | Yes | This is what will show up in the internet banking / ATM
+account_name | Yes | This is the name that will show up in the internet banking / ATM
+is_single_use | Yes | If true, then this virtual account can only be used once
+amount | Yes | The amount that you are expecting the payer to pay
 
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
 
 ## Retail Outlet (Alfamart)
 
@@ -135,124 +133,32 @@ curl --location --request POST 'https://qa.pallapi.com/api/v2/create-retail-paym
     "is_single_use": false,
     "expiration_date": "2052-12-23 00:00:00"  
 }
+```
+
+This endpoint create payment endpoint from retail outlet (such as alfamart)
 
 ### HTTP Request
 
-`GET http://example.com/api/kittens`
+`POST https://qa.pallapi.com/api/v2/create-retail-payment`
 
 ### Query Parameters
 
-Parameter | Default | Description
+Parameter | Required | Description
 --------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
-
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
-
-## Retail Payments (Alfamart)
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2" \
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.get(2);
-```
-
-> The above command returns JSON structured like this:
-
-```json
-{
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
-}
-```
-
-This endpoint retrieves a specific kitten.
-
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
-
-### HTTP Request
-
-`GET http://example.com/kittens/<ID>`
-
-### URL Parameters
-
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to retrieve
+retail_outlet_name| Yes | Please specify 'ALFAMART' for alfamart
+name      | Yes     | The account name 
+amount | Yes | The amount that you are expecting the payer to pay
+external_id | Yes | This is the ID that you can set to correspond to your ID
 
 ## Callbacks
 
-```ruby
-require 'kittn'
+When payer pays via Virtual Account or Retail Outlet, you can specify a callback function that will be called upon the payment event.
+Please specify the callbacks in the dashboard.
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.delete(2)
-```
+There are three callbacks function that you can specify:
+- Virtual Account Created Event
+- Virtual Account Paid Event
+- Retail Outlet Paid Event
 
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.delete(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2" \
-  -X DELETE \
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.delete(2);
-```
-
-> The above command returns JSON structured like this:
-
-```json
-{
-  "id": 2,
-  "deleted" : ":("
-}
-```
-
-This endpoint deletes a specific kitten.
-
-### HTTP Request
-
-`DELETE http://example.com/kittens/<ID>`
-
-### URL Parameters
-
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to delete
 
 # Disburse Payments

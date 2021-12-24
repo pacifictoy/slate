@@ -201,6 +201,7 @@ When payer pays via Virtual Account or Retail Outlet, you can specify a callback
 Please specify the callbacks in the dashboard.
 
 There are three callbacks function that you can specify:
-- Virtual Account Created Event
-- Virtual Account Paid Event
-- Retail Outlet Paid Event
+
+* Virtual Account Created Event
+* Virtual Account Paid Event
+* Retail Outlet Paid Event

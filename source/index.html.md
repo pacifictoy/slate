@@ -205,3 +205,9 @@ There are three callbacks function that you can specify:
 * Virtual Account Created Event
 * Virtual Account Paid Event
 * Retail Outlet Paid Event
+
+Every callback from pallapi will have a verification token in the header of the callback, with the parameter X-CALLBACK-TOKEN.
+
+You can find the token on your dashboard -> settings -> access token
+
+Please reject any callbacks that are sent to your URL that does not have this same token on the header of the callback.

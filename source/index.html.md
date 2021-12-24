@@ -1,5 +1,5 @@
 ---
-title: API Reference
+title: Documentation for Palladium API 
 
 language_tabs: # must be one of https://git.io/vQNgJ
   - shell
@@ -8,7 +8,7 @@ toc_footers:
   - <a href='https://qa.pallapi.com/admin'>Get your access key from the dashboard</a>
 
 includes:
-  - errors
+#  - errors
 
 search: true
 
@@ -31,13 +31,13 @@ Please feel free to [contact us](mailto:admin@pallapi.com) if you have any quest
 
 Please access qa dashboard from [here](https://qa.pallapi.com/admin)
 
-Please access prod dashboard from [here](https://prod.pallapi.com/admin)
+Please access prod dashboard from [here](https://pallapi.com/admin)
 
 # API URL
 
 QA: [http://qa.pallapi.com/api/v2/end-point-name](http://qa.pallapi.com/api/v2/end-point-name)
 
-PROD: [https://prod.pallapi.com/api/v2/end-point-name] (https://prod.pallapi.com/api/v2/end-point-name)
+PROD: [https://pallapi.com/api/v2/end-point-name] (https://pallapi.com/api/v2/end-point-name)
 
 # Authentication
 
@@ -52,7 +52,7 @@ curl "api_endpoint_here" \
 
 > Make sure to replace `bearer-token` with your API key.
 
-Please use API keys to allow access to the API. You can see your API key at our [qa dashboard](https://qa.pallapi.com) or [prod dashboard](https://prod.pallapi.com).
+Please use API keys to allow access to the API. You can see your API key at our [qa dashboard](https://qa.pallapi.com) or [prod dashboard](https://pallapi.com).
 
 We expects for the API key to be included in all API requests to the server in a header that looks like the following:
 
@@ -150,7 +150,52 @@ name      | Yes     | The account name
 amount | Yes | The amount that you are expecting the payer to pay
 external_id | Yes | This is the ID that you can set to correspond to your ID
 
-## Callbacks
+
+# Disburse Payments
+You can send money to Indonesian bank accounts using our API.
+
+### HTTP Request
+
+`POST https://qa.pallapi.com/api/v2/create-disbursement`
+
+### Query Parameters
+
+Parameter | Required | Description
+--------- | ------- | -----------
+retail_outlet_name| Yes | Please specify 'ALFAMART' for alfamart
+name      | Yes     | The account name 
+amount | Yes | The amount that you are expecting the payer to pay
+external_id | Yes | This is the ID that you can set to correspond to your ID
+
+```shell
+curl --location --request POST 'https://qa.pallapi.com/api/v2/create-disbursement' \
+--header 'Authorization: Bearer secret_key' \
+--form 'bank_code="BCA"' \
+--form 'account_name="Dono Warkop"' \
+--form 'account_number="12345678"' \
+--form 'description="Bayar Nasabah"' \
+--form 'external_id="124"' \
+--form 'email_to="dono@gmail.com"' \
+--form 'email_cc="dono@gmail.com"' \
+--form 'email_bcc="dono@gmail.com"' \
+--form 'amount="20000000"'
+```
+> The above command returns JSON structured like this:
+
+```json
+{
+    "id": "b39ff2bfb731485ba159585d44759f15",
+    "status": "pending",
+    "external_id": "124",
+    "bank_code": "BCA",
+    "account_name": "Dono Warkop",
+    "account_number": "12345678",
+    "description": "Bayar Nasabah",
+    "amount": 20000000
+}
+```
+
+# Callbacks
 
 When payer pays via Virtual Account or Retail Outlet, you can specify a callback function that will be called upon the payment event.
 Please specify the callbacks in the dashboard.
@@ -159,6 +204,3 @@ There are three callbacks function that you can specify:
 - Virtual Account Created Event
 - Virtual Account Paid Event
 - Retail Outlet Paid Event
-
-
-# Disburse Payments

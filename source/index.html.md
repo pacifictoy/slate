@@ -108,6 +108,19 @@ account_name | Yes | This is the name that will show up in the internet banking 
 is_single_use | Yes | If true, then this virtual account can only be used once
 amount | Yes | The amount that you are expecting the payer to pay
 
+### Notes Regarding Status
+
+The "status" field in the resulting API means:
+
+Status | Meaning
+-----  | -------
+Pending| API call has been made successfully and we are now waiting for payer to transfer money into the virtual account.
+Done   | Payer has paid money into the virtual account and the balance is now in your income wallet. (observable from the callback and dashboard)
+
+### Notes Regarding Errors
+
+All errors will be displayed with the proper error messages.
+Please let us know if you need assistance.
 
 ## Retail Outlet (Alfamart)
 
@@ -150,9 +163,25 @@ name      | Yes     | The account name
 amount | Yes | The amount that you are expecting the payer to pay
 external_id | Yes | This is the ID that you can set to correspond to your ID
 
+### Notes Regarding Status
+
+The "status" field in the resulting API means:
+
+Status | Meaning
+-----  | -------
+Pending| API call has been made successfully and we are now waiting for payer to pay money in the retail outlet
+Done   | Payer has paid money in the retail outlet and the balance is now available in your income wallet. (observable from the callback and dashboard)
+
+### Notes Regarding Errors
+
+All errors will be displayed with the proper error messages.
+Please let us know if you need assistance.
+
 
 # Disburse Payments
 You can send money to Indonesian bank accounts using our API.
+Please make sure that you have enough balance in the disburse wallet else this call will fail.
+To increase your balance in your disburse wallet, please do "Top Up" from the dashboard and notify us for approval.
 
 ### HTTP Request
 
@@ -168,6 +197,20 @@ account_number | Yes | The account number at the bank for disbursal
 description | Yes | description
 external_id | Yes | This corresponds to your ID
 amount | Yes | The amount to disburse (integer rupiah)
+
+### Notes Regarding Status
+
+The "status" field in the resulting API means:
+
+Status | Meaning
+-----  | -------
+Pending| API call has been made successfully and our system will disburse to the recipient.
+Done   | Disbursal process is completed and the receipient should be able to access the money. (observable from callback and dashboard)
+
+### Notes Regarding Errors
+
+All errors will be displayed with the proper error messages.
+Please let us know if you need assistance.
 
 ```shell
 curl --location --request POST 'https://qa.pallapi.com/api/v2/create-disbursement' \

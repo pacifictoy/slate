@@ -102,7 +102,7 @@ This endpoint create virtual accounts to receive payments.
 
 Parameter | Required? | Description
 --------- | ------- | -----------
-bank_code | Yes | You can specify "BNI, "BRI", "MANDIRI", "BCA" (BCA coming soon)
+bank_code | Yes | You can specify "BNI, "BRI", "BSS" (Bank Sahabat Sampoerna), "BCA" (BCA coming soon)
 external_id | Yes | This is the ID that you can set to correspond to your ID
 account_name | Yes | This is the name that will show up in the internet banking / ATM
 is_single_use | Yes | If true, then this virtual account can only be used once
@@ -114,8 +114,13 @@ The "status" field in the resulting API means:
 
 Status | Meaning
 -----  | -------
-Pending| API call has been made successfully and we are now waiting for payer to transfer money into the virtual account.
+Unpaid | API call has been made successfully and we are now waiting for payer to transfer money into the virtual account.
+Pending| Payer has paid money into the virtual account, but we are waiting for bank settlement (2pm daily).
 Done   | Payer has paid money into the virtual account and the balance is now in your income wallet. (observable from the callback and dashboard)
+
+### Notes Regarding QA Testing
+
+When you call create-virtual-account in QA environment, it will be in "Unpaid" status for one minute, then it'll turn to "Pending" status for five minutes, finally it will turn to "Done" status.
 
 ### Notes Regarding Errors
 
@@ -169,8 +174,13 @@ The "status" field in the resulting API means:
 
 Status | Meaning
 -----  | -------
-Pending| API call has been made successfully and we are now waiting for payer to pay money in the retail outlet
+Unpaid | API call has been made successfully and we are now waiting for payer to pay money in the retail outlet
+Pending| Payer has paid money in the retail outlet, and we are waiting for settlement. 
 Done   | Payer has paid money in the retail outlet and the balance is now available in your income wallet. (observable from the callback and dashboard)
+
+### Notes Regarding QA Testing
+
+When you call create-retail-payment in QA environment, it will be in "Unpaid" status for one minute, then it'll turn to "Pending" status for five minutes, finally it will turn to "Done" status.
 
 ### Notes Regarding Errors
 
@@ -206,6 +216,11 @@ Status | Meaning
 -----  | -------
 Pending| API call has been made successfully and our system will disburse to the recipient.
 Done   | Disbursal process is completed and the receipient should be able to access the money. (observable from callback and dashboard)
+
+### Notes Regarding QA Testing
+
+When you call create-disbursement in QA environment, it will be in Pending status by default.
+If you call it with the amount of IDR 90,000, it will be in Pending status then a minute later it should turn into Done status.
 
 ### Notes Regarding Errors
 

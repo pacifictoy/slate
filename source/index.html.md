@@ -68,12 +68,13 @@ You must replace <code>bearer-token</code> with your personal API key.
 
 ```shell
 curl --location --request POST 'https://qa.pallapi.com/api/v2/create-virtual-account' \
---header 'Authorization: Bearer bearer-token' \
---form 'bank_code="BNI"' \
+--header 'Authorization: Bearer secret_key' \
+--form 'bank_code="MANDIRI"' \
 --form 'name="PT Test Bersama"' \
 --form 'is_single_use="true"' \
 --form 'amount="10000000"' \
---form 'external_id="124"'
+--form 'external_id="124"' \
+--form 'expiration_date="2024-01-21"' 
 ```
 
 > The above command returns JSON structured like this:
@@ -83,12 +84,12 @@ curl --location --request POST 'https://qa.pallapi.com/api/v2/create-virtual-acc
     "id": "d718b709b87a83e0950eca8803a123f9",
     "status": "pending",
     "external_id": "124",
-    "bank_code": "BNI",
-    "account_name": "XDT-PT Test Bersama",
-    "account_number": "8808999986203536",
+    "bank_code": "MANDIRI",
+    "account_name": "PT Test Bersama",
+    "account_number": "889089999421835",
     "amount": 10000000,
     "is_single_use": true,
-    "expiration_date": "2052-12-23 00:00:00"
+    "expiration_date": "2024-01-21 07:00:00"
 }
 ```
 
@@ -107,6 +108,7 @@ external_id | Yes | This is the ID that you can set to correspond to your ID
 account_name | Yes | This is the name that will show up in the internet banking / ATM
 is_single_use | Yes | If true, then this virtual account can only be used once
 amount | Yes | The amount that you are expecting the payer to pay
+expiration_date | No | The expiration date of the virtual account
 
 ### Notes Regarding Status
 
@@ -131,11 +133,12 @@ Please let us know if you need assistance.
 
 ```shell
 curl --location --request POST 'https://qa.pallapi.com/api/v2/create-retail-payment' \
---header 'Authorization: Bearer pallapi_secret_development_90f9c69a09ee36d31a1b734d75d8fa74' \
+--header 'Authorization: Bearer secret_key' \
 --form 'name="PT Test Bersama"' \
 --form 'retail_outlet_name="ALFAMART"' \
 --form 'amount="1000000"' \
---form 'external_id="123"'
+--form 'external_id="123"' \
+--form 'expiration_date="2023-01-21"'
 ```
 > The above command returns JSON structured like this:
 
@@ -149,7 +152,7 @@ curl --location --request POST 'https://qa.pallapi.com/api/v2/create-retail-paym
     "payment_code": "TEST307106",
     "amount": 1000000,
     "is_single_use": false,
-    "expiration_date": "2052-12-23 00:00:00"  
+    "expiration_date": "2023-01-21 07:00:00"  
 }
 ```
 
@@ -167,6 +170,7 @@ retail_outlet_name| Yes | Please specify 'ALFAMART' for alfamart
 name      | Yes     | The account name 
 amount | Yes | The amount that you are expecting the payer to pay
 external_id | Yes | This is the ID that you can set to correspond to your ID
+expiration_date | No | The expiration date of the payment code
 
 ### Notes Regarding Status
 
@@ -188,6 +192,58 @@ All errors will be displayed with the proper error messages.
 Please let us know if you need assistance.
 
 
+## QRIS
+
+```shell
+curl --location --request POST 'https://qa.pallapi.com/api/v2/create-qris' \
+--header 'Authorization: Bearer secret_key' \
+--form 'amount="200000"' \
+--form 'external_id="12345"'
+```
+> The above command returns JSON structured like this:
+
+```json
+{
+ "id": "639fa43877d5a7c9979a7bd169a948e5",
+    "status": "unpaid",
+    "external_id": "12345",
+    "amount": 200000,
+    "fees": 5900,
+    "expiration_date": "2022-02-23 19:20:28",
+    "timeout_in_seconds": 86400,
+    "qris_string": "0002010102122666001011893600817022000897302151702220000089730303URE51440014ID.CO.QRIS.WWW0215ID20221532054320303URE52043333530336054062000005802ID5925xxxxxx  
+    xxxxxxxxxxx 610510160624101055160905126448880667730712D3WWBP19GJ3P63043F83"
+}
+```
+
+This endpoint creates a QRIS code so that your customer can pay using Gopay, OVO, Jenius, etc.
+The QRIS will be in a form of string and you need to render it into a QR code using publically available QR Code renderer.
+If you are just testing manually, you can copy-paste into this website: https://www.patrick-wied.at/static/qrgen/
+
+### HTTP Request
+
+`POST https://qa.pallapi.com/api/v2/create-qris`
+
+Note: The resulting QRIS will be valid for 24h. Currently there is no way to control this expiration date via API.
+
+### Query Parameters
+
+Parameter | Required | Description
+--------- | ------- | -----------
+amount | Yes | The amount that you are expecting the payer to pay
+external_id | Yes | This is the ID that you can set to correspond to your ID
+
+### Notes Regarding Status
+
+The "status" field in the resulting API means:
+
+Status | Meaning
+-----  | -------
+Unpaid | API call has been made successfully and we are now waiting for payer to scan the QRIS and pay
+Pending| Payer has scanned the QRIS and paid. Now we are waiting for settlement. 
+Done   | The balance is now available in your income wallet. (observable from the callback and dashboard)
+
+
 # Disburse Payments
 You can send money to Indonesian bank accounts using our API.
 Please make sure that you have enough balance in the disburse wallet else this call will fail.
@@ -207,6 +263,7 @@ account_number | Yes | The account number at the bank for disbursal
 description | Yes | description
 external_id | Yes | This corresponds to your ID
 amount | Yes | The amount to disburse (integer rupiah)
+use_flashloan | No | Whether you want to use the flashloan feature, please use 1 for yes, 0 for no
 
 ### Notes Regarding Status
 
@@ -248,7 +305,9 @@ curl --location --request POST 'https://qa.pallapi.com/api/v2/create-disbursemen
     "account_name": "James Bond",
     "account_number": "12345678",
     "description": "Bayar Nasabah",
-    "amount": 20000000
+    "amount": 1000000,
+    "fees": 8400,
+    "flashloan_status": "not_flashloan"
 }
 ```
 
@@ -268,6 +327,103 @@ Every callback from pallapi will have a verification token in the header of the 
 You can find the token on your dashboard -> settings -> access token
 
 Please reject any callbacks that are sent to your URL that does not have this same token on the header of the callback.
+
+# Querying Your Transactions
+
+Despite our callbacks, in case you want to query the status and detail of your transactions, you can do that by using the following APIs below.
+
+## Querying Virtual Account Transaction
+
+```shell
+curl --location --request GET 'https://qa.pallapi.com/api/v2/query-virtual-account?id=8fa0275e0bacecc3a5e0bebf411bf525' \
+--header 'Authorization: Bearer secret_key'
+```
+> The above command returns JSON structured like this:
+
+```json
+[
+    {
+        "id": "8fa0275e0bacecc3a5e0bebf411bf525",
+        "status": "done",
+        "external_id": "164204282674209c1ceec",
+        "bank_code": "BRI",
+        "account_name": "PT Test Bersama",
+        "account_number": "920019999476603",
+        "amount": 30000,
+        "is_single_use": false,
+        "expiration_date": "2023-01-21 00:00:00"
+    }
+]
+```
+
+## Querying Retail Payment Transaction
+
+```shell
+curl --location --request GET 'https://qa.pallapi.com/api/v2/query-retail-payment?id=b6bc8d1ef421bbe59511e4c22872ff39' \
+--header 'Authorization: Bearer secret_key'
+```
+> The above command returns JSON structured like this:
+
+```json
+[
+    {
+        "id": "b6bc8d1ef421bbe59511e4c22872ff39",
+        "status": "done",
+        "external_id": "123",
+        "retail_outlet_name": "ALFAMART",
+        "name": "123456789012345678901234567890123456789",
+        "payment_code": "TEST62620",
+        "amount": 200000,
+        "is_single_use": false,
+        "expiration_date": "2023-01-21 00:00:00"
+    }
+]
+```
+
+## Querying Disbursement Transaction
+
+```shell
+curl --location --request GET 'https://qa.pallapi.com/api/v2/query-disbursement?id=0230607a5744348b4ad9272e3c4c48b1' \
+--header 'Authorization: Bearer secret_key' \
+```
+> The above command returns JSON structured like this:
+
+```json
+[
+    {
+        "id": "0230607a5744348b4ad9272e3c4c48b1",
+        "status": "done",
+        "external_id": "124",
+        "bank_code": "TABUNGAN_PENSIUNAN_NASIONAL",
+        "account_name": "Dono Warkop",
+        "account_number": "0123456",
+        "description": "Bayar Nasabah",
+        "amount": 10000,
+        "fees": 8888,
+        "flashloan_status": "not_flashloan"
+    }
+]
+```
+
+## Querying QRIS Transaction
+
+```shell
+curl --location --request GET 'https://qa.pallapi.com/api/v2/query-qris?id=f80aa195bb8e7d49f86566ddba2b4022' \
+--header 'Authorization: Bearer secret_key' \
+```
+> The above command returns JSON structured like this:
+
+```json
+[
+    {
+        "id": "f80aa195bb8e7d49f86566ddba2b4022",
+        "status": "unpaid",
+        "external_id": "12345",
+        "amount": 15000,
+        "fees": -8505
+    }
+]
+```
 
 # Querying Your Wallet Balance
 
@@ -306,10 +462,61 @@ curl --location --request GET 'https://qa.pallapi.com/api/v2/me' \
 {
     "name": "PT Test Client",
     "email": "qa@testclient.com",
-    "remaning_withdrawable_amount": 10000000,
-    "remaning_disbursable_amount": 550000000
+    "remaining_withdrawable_amount": 5337593200,
+    "remaining_disbursable_amount": 7425800,
+    "max_allowable_loan": 6994120,
+    "total_used_loan_amount": "1011400"
 }
 ```
+
+# Querying Your Transactions
+
+You can view your transactions in the GUI dashboard.
+However, if you prefer to use API, then you can call our API to get all of your transactions.
+
+### HTTP Request
+
+`GET https://qa.pallapi.com/api/v2/get-transaction-list?start_date=2022-01-01&end_date=2022-01-31`
+
+### Query Parameter
+ 
+ must have start_date and end_date in the GET query parameter
+
+```shell
+curl --location --request GET 'https://qa.pallapi.com/api/v2/get-transaction-list?start_date=2022-01-01&end_date=2022-01-31 \
+--header 'Authorization: Bearer secret_key'
+```
+> The above command returns JSON structured like this:
+
+```json
+[
+    {
+        "transaction_type": "bni",
+        "flashloan_status": "not_flashloan",
+        "amount": 1000000,
+        "fee": -8400,
+        "total": 991600,
+        "bank_code": "BNI",
+        "name": null,
+        "description": null,
+        "account_number": "8808999966811159",
+        "date": "2022-01-10"
+    },
+    {
+        "transaction_type": "disbursement",
+        "flashloan_status": "not_flashloan",
+        "amount": 90000,
+        "fee": 8400,
+        "total": 98400,
+        "bank_code": "BCA",
+        "name": "Test Account",
+        "description": "disbursement IDR 90.000",
+        "account_number": "1234567890",
+        "date": "2022-01-10"
+    },
+]
+```
+
 
 
 # Supported Banks for Disbursal

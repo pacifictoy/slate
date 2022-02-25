@@ -328,9 +328,9 @@ You can find the token on your dashboard -> settings -> access token
 
 Please reject any callbacks that are sent to your URL that does not have this same token on the header of the callback.
 
-# Querying Your Transactions
+# Querying One Transaction
 
-Despite our callbacks, in case you want to query the status and detail of your transactions, you can do that by using the following APIs below.
+Despite our callbacks, in case you want to query the status and detail of one transaction, you can do that by using the following APIs below.
 
 ## Querying Virtual Account Transaction
 
@@ -356,6 +356,19 @@ curl --location --request GET 'https://qa.pallapi.com/api/v2/query-virtual-accou
 ]
 ```
 
+### HTTP Request
+
+`POST https://qa.pallapi.com/api/v2/query-virtual-account`
+
+### Query Parameters
+
+Parameter | Required | Description
+--------- | ------- | -----------
+id | Yes | The Transaction ID that were given by our system
+
+Why can't we use external id to query?
+Because external id is not guaranteed unique, you must use our transaciton ID to query.
+
 ## Querying Retail Payment Transaction
 
 ```shell
@@ -379,6 +392,19 @@ curl --location --request GET 'https://qa.pallapi.com/api/v2/query-retail-paymen
     }
 ]
 ```
+
+### HTTP Request
+
+`POST https://qa.pallapi.com/api/v2/query-retail-payment`
+
+### Query Parameters
+
+Parameter | Required | Description
+--------- | ------- | -----------
+id | Yes | The Transaction ID that were given by our system
+
+Why can't we use external id to query?
+Because external id is not guaranteed unique, you must use our transaction ID to query.
 
 ## Querying Disbursement Transaction
 
@@ -405,6 +431,19 @@ curl --location --request GET 'https://qa.pallapi.com/api/v2/query-disbursement?
 ]
 ```
 
+### HTTP Request
+
+`POST https://qa.pallapi.com/api/v2/query-disbursement`
+
+### Query Parameters
+
+Parameter | Required | Description
+--------- | ------- | -----------
+id | Yes | The Transaction ID that were given by our system
+
+Why can't we use external id to query?
+Because external id is not guaranteed unique, you must use our transaction ID to query.
+
 ## Querying QRIS Transaction
 
 ```shell
@@ -424,6 +463,18 @@ curl --location --request GET 'https://qa.pallapi.com/api/v2/query-qris?id=f80aa
     }
 ]
 ```
+### HTTP Request
+
+`POST https://qa.pallapi.com/api/v2/query-qris`
+
+### Query Parameters
+
+Parameter | Required | Description
+--------- | ------- | -----------
+id | Yes | The Transaction ID that were given by our system
+
+Why can't we use external id to query?
+Because external id is not guaranteed unique, you must use our transaction ID to query.
 
 # Querying Your Wallet Balance
 

@@ -358,7 +358,7 @@ curl --location --request GET 'https://qa.pallapi.com/api/v2/query-virtual-accou
 
 ### HTTP Request
 
-`POST https://qa.pallapi.com/api/v2/query-virtual-account`
+`GET https://qa.pallapi.com/api/v2/query-virtual-account`
 
 ### Query Parameters
 
@@ -395,7 +395,7 @@ curl --location --request GET 'https://qa.pallapi.com/api/v2/query-retail-paymen
 
 ### HTTP Request
 
-`POST https://qa.pallapi.com/api/v2/query-retail-payment`
+`GET https://qa.pallapi.com/api/v2/query-retail-payment`
 
 ### Query Parameters
 
@@ -433,7 +433,7 @@ curl --location --request GET 'https://qa.pallapi.com/api/v2/query-disbursement?
 
 ### HTTP Request
 
-`POST https://qa.pallapi.com/api/v2/query-disbursement`
+`GET https://qa.pallapi.com/api/v2/query-disbursement`
 
 ### Query Parameters
 
